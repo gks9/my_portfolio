@@ -1,0 +1,38 @@
+[
+  {
+    "title": "IOT-Enabled Adaptive Street Lighting Based on Traffic and Weather Patterns",
+    "description": "A decentralized adaptive street lighting system that combines edge computing, context-aware transformer models, and multimodal sensor fusion to eliminate centralized bottlenecks.",
+    "tech": ["HTML", "CSS", "JavaScript"],
+    "link": "https://docs.google.com/document/d/1QGQsZn4itB1u4_3QfIVhmB6wc7VTiTtwhK5gpF2j27M/edit?tab=t.0#heading=h.7k7yd6r608u4"
+  },
+  {
+    "title": "Bomb Detection Rover",
+    "description": "Hardware project on bomb detection rover with software simulation",
+    "tech": ["Node.js", "Express"],
+    "link": "https://drive.google.com/drive/folders/1S10OQSfpw-fBDxXCX6vCp9JE03Tl0r7t"
+  },
+  {
+    "title": "Smart Spectacle System",
+    "description": "Development of a Wearable Spectacle System for Assisting the Visually Impaired with Human Recognition, Object Detection, and Navigation",
+    "tech": ["Node.js", "Express"],
+    "link": "#"
+  },
+  {
+    "title": "Automated Attendance System",
+    "description": "Automated Attendance Systems in Colleges using facial recognition",
+    "tech": ["Node.js", "Express"],
+    "link": "#"
+  },
+  {
+    "title": "Shuttlespot",
+    "description": "shuttle tracking service in vit",
+    "tech": ["Node.js", "Express"],
+    "link": "#"
+  },
+  {
+    "title": "Another Project",
+    "description": "Brief description goes here.",
+    "tech": ["Node.js", "Express"],
+    "link": "#"
+  }
+]

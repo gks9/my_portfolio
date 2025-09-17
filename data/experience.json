@@ -1,0 +1,27 @@
+[
+  {
+    "role": "IT Intern",
+    "company": "Olam Agri",
+    "location": "",
+    "start": "June 2025",
+    "end": "July 2025",
+    "bullets": [
+      "Developed interactive dashboards in Power BI including the OGA Consolidated Dashboard, Sales Dashboard, and Factory Security Readiness Report, aiding executive decision-making.",
+      "Worked with Snowflake to extract, clean, and consolidate large datasets for reporting and KPI analysis.",
+      "Created and presented data-driven IA reports and management presentations for internal stakeholders and leadership.",
+      "Collaborated with cross-functional teams to gather requirements, translate them into visual insights, and automate reporting workflows."
+    ]
+  },
+  {
+    "role": "Software Intern",
+    "company": "National Small Industries Corporation (NSIC)",
+    "location": "",
+    "start": "May 2024",
+    "end": "July 2024",
+    "bullets": [
+      "Worked on credit card fraud detection using Python under the guidance of NSIC professors in a professional environment.",
+      "Completed a Python course as part of the internship, concluding with a skill test score of 90+.",
+      "Worked with various Python and database tools like Pandas, PyCharm, and SQL."
+    ]
+  }
+]

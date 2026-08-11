@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Krishna Srikar Gudipati — Data & Cloud Engineer</title>
-  <meta name="description" content="Krishna Srikar Gudipati — Data engineering, analytics, and cloud-based workflows. Projects, skills, experience, and contact." />
+  <title>Krishna Srikar Gudipati — Software Developer</title>
+  <meta name="description" content="Software developer with experience in data engineering, analytics, and cloud workflows. Projects, skills, experience, and contact." />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,8 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <!-- Open Graph / Twitter -->
-  <meta property="og:title" content="Krishna Srikar Gudipati — Data & Cloud Engineer" />
-  <meta property="og:description" content="Data engineering, ETL, analytics, and cloud-based workflows. Projects, skills, and contact." />
+  <meta property="og:title" content="Krishna Srikar Gudipati — Software Developer" />
+  <meta property="og:description" content="Software developer with experience in data engineering, analytics, and cloud workflows. Projects, skills, experience, and contact." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://gks9.github.io/my_portfolio/" />
   <meta property="og:image" content="assets/images/Srikar_profile.jpg" />
@@ -21,7 +21,7 @@
   <meta name="twitter:image" content="assets/images/Srikar_profile.jpg" />
 
   <link rel="icon" href="assets/images/Srikar_profile.jpg" />
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=6" />
 
   <!-- JSON-LD Resume (minimal) -->
   <script type="application/ld+json">
@@ -29,34 +29,46 @@
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Krishna Srikar Gudipati",
-    "jobTitle": "Data / Cloud Engineer",
+    "jobTitle": "Software Developer",
     "url": "https://gks9.github.io/my_portfolio/",
     "sameAs": [
       "https://www.linkedin.com/in/krishna-srikar-gudipati-0b271b26b/",
       "https://github.com/gks9"
     ],
-    "description": "Computer Science graduate with hands-on experience in data engineering, analytics, and cloud-based workflows. Skilled in Python, SQL, Snowflake, Power BI, Databricks, and AWS."
+    "description": "Computer Science graduate with hands-on experience in data engineering, analytics, cloud workflows and full-stack development."
   }
   </script>
 </head>
-<body>
+<body class="theme-dark">
   <header class="site-header">
     <div class="container header-inner">
-      <img class="avatar" alt="Krishna Srikar Gudipati — profile photo" loading="lazy" src="assets/images/Srikar_profile.jpg" width="160" height="160">
+      <picture>
+        <source srcset="assets/images/Srikar_profile.jpg" type="image/jpeg">
+        <img class="avatar" alt="Krishna Srikar Gudipati — profile photo" loading="lazy" src="assets/images/Srikar_profile.jpg" width="160" height="160">
+      </picture>
+
       <div class="hero-text">
         <h1 id="site-name">Krishna Srikar Gudipati</h1>
-        <p class="lead" id="hero-sub">Data Engineer — Cloud & Analytics · ETL • Pipelines • Reporting</p>
-        <p class="about-brief">I build data-driven solutions and cloud workflows that turn data into measurable impact.</p>
+        <p class="lead" id="hero-sub">Software Developer • Data & Cloud</p>
+        <p class="about-brief" id="hero-blurb">I build reliable, scalable data-driven applications and cloud workflows that solve real problems — ETL, analytics, automation, and web apps.</p>
         <p class="ctas">
-          <a class="btn primary" href="#experience">Experience</a>
+          <a class="btn primary" href="#about">About</a>
+          <a class="btn" href="#experience">Experience</a>
           <a class="btn" href="#projects">Projects</a>
-          <a class="btn" href="resume.pdf" target="_blank" rel="noopener">Download resume</a>
+          <a class="btn" href="resume.pdf" target="_blank" rel="noopener">Resume</a>
         </p>
       </div>
     </div>
   </header>
 
   <main id="site-main" class="container">
+
+    <section id="about" aria-labelledby="about-heading" class="section">
+      <h2 id="about-heading">About</h2>
+      <div class="card">
+        <p id="about-text">Loading…</p>
+      </div>
+    </section>
 
     <section id="experience" aria-labelledby="experience-heading" class="section">
       <h2 id="experience-heading">Experience</h2>
@@ -73,16 +85,8 @@
       <div id="skills-list" class="grid cards small"></div>
     </section>
 
-    <section id="about" aria-labelledby="about-heading" class="section">
-      <h2 id="about-heading">About</h2>
-      <div class="card">
-        <p id="about-text">Loading…</p>
-      </div>
-    </section>
-
     <section id="contact" aria-labelledby="contact-heading" class="section">
       <h2 id="contact-heading">Contact</h2>
-      <!-- The site JSON can provide a "formspree" field; script will fall back to it if /api/contact fails -->
       <form id="contact-form" class="card form-card" aria-describedby="contact-status">
         <label for="name">Name</label>
         <input id="name" name="name" required />
@@ -106,6 +110,6 @@
     <p>© Krishna Srikar Gudipati • <a href="https://www.linkedin.com/in/krishna-srikar-gudipati-0b271b26b/" rel="noopener">LinkedIn</a> • <a href="https://github.com/gks9" rel="noopener">GitHub</a></p>
   </footer>
 
-  <script src="script.js?v=3" defer></script>
+  <script src="script.js?v=6" defer></script>
 </body>
 </html>

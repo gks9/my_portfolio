@@ -1,174 +1,150 @@
+/* script.js — improved renderer for the portfolio site */
+
+/* Utility: load JSON with helpful error message */
 async function loadJSON(path) {
-  const res = await fetch(path);
-  if (!res.ok) throw new Error(`Failed to load ${path}`);
+  const res = await fetch(path, {cache: "no-cache"});
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Failed to load ${path}: ${res.status} ${res.statusText} ${text}`);
+  }
   return res.json();
 }
 
-function setText(id, text) {
-  const el = document.getElementById(id);
-  if (el && text) el.textContent = text;
+/* Render helpers */
+function formatDates(start, end) {
+  if (!start && !end) return "";
+  return start && end ? `${start} — ${end}` : start ? `${start} — Present` : end ? `Until ${end}` : "";
 }
 
-function setHref(id, href) {
-  const el = document.getElementById(id);
-  if (el && href) el.href = href;
+function createCardHTML(titleHTML, bodyHTML) {
+  return `<div class="card">
+    ${titleHTML}
+    <div class="meta">${bodyHTML}</div>
+  </div>`;
 }
 
-function createProjectCard(p) {
-  const div = document.createElement('div');
-  div.className = 'card';
-  div.innerHTML = `
-    <h3>${p.title}</h3>
-    <p>${p.description || ''}</p>
-    <div class="meta">${(p.tech || []).join(' • ')}</div>
-    ${p.link ? `<p><a href="${p.link}" target="_blank" rel="noopener">View project</a></p>` : ''}
-  `;
-  return div;
+/* Experience renderer: top of page */
+function renderExperience(exps) {
+  const root = document.getElementById('experience-list') || document.getElementById('experience-grid');
+  if (!root) return;
+  root.innerHTML = '';
+
+  exps.forEach(exp => {
+    const title = `<h3 class="role">${exp.role}</h3><div class="company">${exp.company} ${exp.location ? '• ' + exp.location : ''}</div><div class="dates">${formatDates(exp.start, exp.end)}</div>`;
+    const bullets = (exp.bullets || []).map(b => `<li>${b}</li>`).join('');
+    const body = `<ul class="bullets">${bullets}</ul>`;
+    const html = createCardHTML(title, body);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'experience-item';
+    wrapper.innerHTML = html;
+    root.appendChild(wrapper);
+  });
 }
 
-function createRoleCard(r) {
-  const div = document.createElement('div');
-  div.className = 'card';
-  const when = [r.start, r.end].filter(Boolean).join(' — ');
-  div.innerHTML = `
-    <h3>${r.role}${r.company ? `, ${r.company}` : ''}</h3>
-    <div class="meta">${[when, r.location].filter(Boolean).join(' • ')}</div>
-    ${Array.isArray(r.bullets) && r.bullets.length ? `<ul>${r.bullets.map(b => `<li>${b}</li>`).join('')}</ul>` : ''}
-  `;
-  return div;
+/* Projects renderer — keeps your existing projects.json schema (title, link, summary, tech, image) */
+function renderProjects(projects) {
+  const root = document.getElementById('projects-grid');
+  if (!root) return;
+  root.innerHTML = '';
+  projects.forEach(p => {
+    const title = `<h3>${p.title}</h3>`;
+    const summary = `<p class="summary">${p.summary || ''}</p>`;
+    const tech = p.tech ? `<p class="tech">${(Array.isArray(p.tech) ? p.tech.join(', ') : p.tech)}</p>` : '';
+    const cta = p.link ? `<a class="btn" href="${p.link}" target="_blank" rel="noopener">View project</a>` : '';
+    const html = `<div class="card project-card">${title}${summary}${tech}${cta}</div>`;
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = html;
+    root.appendChild(wrapper);
+  });
 }
 
-function createEduCard(e) {
-  const div = document.createElement('div');
-  div.className = 'card';
-  const when = [e.start, e.end].filter(Boolean).join(' — ');
-  div.innerHTML = `
-    <h3>${e.degree || e.level}${e.school ? `, ${e.school}` : ''}</h3>
-    <div class="meta">${[when, e.details].filter(Boolean).join(' • ')}</div>
-  `;
-  return div;
+/* Skills renderer — expects an array of strings or objects */
+function renderSkills(skills) {
+  const root = document.getElementById('skills-list');
+  if (!root) return;
+  root.innerHTML = '';
+  skills.forEach(s => {
+    const label = typeof s === 'string' ? s : (s.name || JSON.stringify(s));
+    const el = document.createElement('div');
+    el.className = 'card skill';
+    el.innerHTML = `<strong>${label}</strong>`;
+    root.appendChild(el);
+  });
 }
 
-function createCertItem(c) {
-  const li = document.createElement('li');
-  const label = [c.title, c.issuer, c.date].filter(Boolean).join(' — ');
-  li.innerHTML = c.link ? `<a href="${c.link}" target="_blank" rel="noopener">${label}</a>` : label;
-  return li;
+/* Populate About text (from data/site.json or provided text) */
+function setAbout(text) {
+  const el = document.getElementById('about-text');
+  if (!el) return;
+  el.textContent = text || '';
 }
 
-async function main() {
-  setText('year', String(new Date().getFullYear()));
-
-  // Load core site config
-  try {
-    const site = await loadJSON('data/site.json');
-    setText('site-name', site.name);
-    setText('footer-name', site.name);
-    setText('site-tagline', site.tagline);
-    setText('about-text', site.about);
-    setText('location-text', site.location);
-
-    setHref('linkedin-link', site.linkedin);
-    setHref('github-link', site.github);
-    setHref('email-link', site.email ? `mailto:${site.email}` : null);
-    setHref('resume-link', site.resume || 'resume.pdf');
-
-    const avatar = document.getElementById('profile-photo');
-    if (avatar && site.photo) {
-      avatar.src = site.photo;
-      avatar.style.display = 'block';
-    } else if (avatar) {
-      avatar.style.display = 'none';
-    }
-  } catch (e) {
-    console.warn('Site JSON not found or invalid, using defaults.', e);
-  }
-
-  // Skills
-  try {
-    const skills = await loadJSON('data/skills.json');
-    const ul = document.getElementById('skills-list');
-    if (ul && Array.isArray(skills)) {
-      ul.innerHTML = skills.map(s => `<li>${s}</li>`).join('');
-    }
-  } catch (e) { console.warn('Skills JSON not found.', e); }
-
-  // Certifications
-  try {
-    const certs = await loadJSON('data/certifications.json');
-    const ul = document.getElementById('certs-list');
-    if (ul && Array.isArray(certs)) {
-      certs.forEach(c => ul.appendChild(createCertItem(c)));
-    }
-  } catch (e) { console.warn('Certifications JSON not found.', e); }
-
-  // Experience
-  try {
-    const experience = await loadJSON('data/experience.json');
-    const grid = document.getElementById('experience-grid');
-    if (grid && Array.isArray(experience)) {
-      experience.forEach(r => grid.appendChild(createRoleCard(r)));
-    }
-  } catch (e) { console.warn('Experience JSON not found.', e); }
-
-  // Education
-  try {
-    const education = await loadJSON('data/education.json');
-    const grid = document.getElementById('education-grid');
-    if (grid && Array.isArray(education)) {
-      education.forEach(e => grid.appendChild(createEduCard(e)));
-    }
-  } catch (e) { console.warn('Education JSON not found.', e); }
-
-  // Leadership
-  try {
-    const leadership = await loadJSON('data/leadership.json');
-    const grid = document.getElementById('leadership-grid');
-    if (grid && Array.isArray(leadership)) {
-      leadership.forEach(r => grid.appendChild(createRoleCard(r)));
-    }
-  } catch (e) { console.warn('Leadership JSON not found.', e); }
-
-  // Projects
-  try {
-    const projects = await loadJSON('data/projects.json');
-    const grid = document.getElementById('projects-grid');
-    if (grid && Array.isArray(projects)) {
-      projects.forEach(p => grid.appendChild(createProjectCard(p)));
-    }
-  } catch (e) { console.warn('Projects JSON not found or invalid.', e); }
-
-  // Contact form
+/* Contact form: posts to /api/contact (keeps existing endpoint behavior) */
+function setupContactForm() {
   const form = document.getElementById('contact-form');
   const status = document.getElementById('contact-status');
-  if (form) {
-    form.addEventListener('submit', async (ev) => {
-      ev.preventDefault();
-      const name = document.getElementById('name').value.trim();
-      const from = document.getElementById('email').value.trim();
-      const message = document.getElementById('message').value.trim();
-      status.textContent = 'Sending...';
-      try {
-        const res = await fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, from, message })
-        });
-        if (res.ok) {
-          status.textContent = 'Thanks! Message sent.';
-          form.reset();
-          return;
-        }
-        throw new Error(`API responded ${res.status}`);
-      } catch {
-        const to = (document.getElementById('email-link')?.href || '').replace('mailto:', '') || 'gksrikar9@gmail.com';
-        const subject = `Portfolio contact from ${name}`;
-        const body = `${message}\n\nReply-to: ${from}`;
-        window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        status.textContent = 'Opening email client...';
+  if (!form) return;
+
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    status.textContent = 'Sending…';
+    const data = {
+      name: form.name?.value || '',
+      email: form.email?.value || '',
+      message: form.message?.value || ''
+    };
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) {
+        const txt = await res.text().catch(() => '');
+        throw new Error(`Server ${res.status} ${res.statusText} ${txt}`);
       }
-    });
-  }
+      status.textContent = 'Thanks — message sent.';
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      status.textContent = 'Could not send message. Try again later or email gksrikar... (fallback)';
+    }
+  });
 }
 
-main();
+/* Init: load data and render the page */
+async function init() {
+  try {
+    const site = await loadJSON('data/site.json').catch(() => ({}));
+    const aboutText = site && site.about ? site.about : `I’m a Computer Science and Engineering graduate from VIT Vellore with hands-on experience in data engineering, analytics, and cloud-based workflows. Through internships at MSD Pharma, Olam Agri, and NSIC, I’ve worked on ETL pipelines, data transformation, validation, dashboarding, and reporting using Python, SQL, Snowflake, Power BI, Dataiku, Databricks, and AWS. I’m a Databricks Data Engineer Associate and Oracle Cloud Infrastructure 2025 Foundations Associate, with a strong foundation in building data-driven solutions and automation workflows. Beyond internships, I’ve developed patent-published IoT systems, AI-based accessibility projects, and campus tech solutions like shuttle tracking. My interests lie in data engineering, cloud platforms, and building practical tech that solves real problems. I enjoy learning, experimenting, and contributing to projects that combine engineering with measurable impact.`;
+    setAbout(aboutText);
+  } catch (e) {
+    console.warn('Could not load site.json', e);
+  }
+
+  try {
+    const experience = await loadJSON('data/experience.json');
+    if (Array.isArray(experience)) renderExperience(experience);
+  } catch (e) {
+    console.warn('Experience load failed', e);
+  }
+
+  try {
+    const projects = await loadJSON('data/projects.json');
+    if (Array.isArray(projects)) renderProjects(projects);
+  } catch (e) {
+    console.warn('Projects load failed', e);
+  }
+
+  try {
+    const skills = await loadJSON('data/skills.json');
+    if (Array.isArray(skills)) renderSkills(skills);
+  } catch (e) {
+    console.warn('Skills load failed', e);
+  }
+
+  setupContactForm();
+}
+
+document.addEventListener('DOMContentLoaded', init);

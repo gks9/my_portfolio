@@ -1,16 +1,19 @@
-/* script.js — improved renderer for the portfolio site */
+// script.js — corrected renderer with debug & graceful errors
 
-/* Utility: load JSON with helpful error message */
 async function loadJSON(path) {
-  const res = await fetch(path, {cache: "no-cache"});
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`Failed to load ${path}: ${res.status} ${res.statusText} ${text}`);
+  try {
+    const res = await fetch(path, { cache: "no-cache" });
+    if (!res.ok) {
+      const t = await res.text().catch(() => "");
+      throw new Error(`${path} load failed: ${res.status} ${res.statusText} ${t}`);
+    }
+    return await res.json();
+  } catch (err) {
+    console.error("loadJSON error:", err);
+    throw err;
   }
-  return res.json();
 }
 
-/* Render helpers */
 function formatDates(start, end) {
   if (!start && !end) return "";
   return start && end ? `${start} — ${end}` : start ? `${start} — Present` : end ? `Until ${end}` : "";
@@ -23,15 +26,24 @@ function createCardHTML(titleHTML, bodyHTML) {
   </div>`;
 }
 
-/* Experience renderer: top of page */
+function showSectionError(sectionId, message) {
+  const root = document.getElementById(sectionId);
+  if (!root) return;
+  root.innerHTML = `<div class="card"><strong>Error</strong><p class="muted">${message}</p></div>`;
+}
+
+/* Experience renderer */
 function renderExperience(exps) {
   const root = document.getElementById('experience-list') || document.getElementById('experience-grid');
-  if (!root) return;
+  if (!root) { console.warn('No experience root found'); return; }
   root.innerHTML = '';
 
-  exps.forEach(exp => {
-    const title = `<h3 class="role">${exp.role}</h3><div class="company">${exp.company} ${exp.location ? '• ' + exp.location : ''}</div><div class="dates">${formatDates(exp.start, exp.end)}</div>`;
-    const bullets = (exp.bullets || []).map(b => `<li>${b}</li>`).join('');
+  (exps || []).forEach(exp => {
+    const title = `<h3 class="role">${escapeHTML(exp.role || '')}</h3>
+      <div class="company">${escapeHTML(exp.company || '')}${exp.location ? ' • ' + escapeHTML(exp.location) : ''}</div>
+      <div class="dates">${escapeHTML(formatDates(exp.start, exp.end))}</div>`;
+
+    const bullets = (exp.bullets || []).map(b => `<li>${escapeHTML(b)}</li>`).join('');
     const body = `<ul class="bullets">${bullets}</ul>`;
     const html = createCardHTML(title, body);
     const wrapper = document.createElement('div');
@@ -41,16 +53,16 @@ function renderExperience(exps) {
   });
 }
 
-/* Projects renderer — keeps your existing projects.json schema (title, link, summary, tech, image) */
+/* Projects renderer */
 function renderProjects(projects) {
   const root = document.getElementById('projects-grid');
   if (!root) return;
   root.innerHTML = '';
-  projects.forEach(p => {
-    const title = `<h3>${p.title}</h3>`;
-    const summary = `<p class="summary">${p.summary || ''}</p>`;
-    const tech = p.tech ? `<p class="tech">${(Array.isArray(p.tech) ? p.tech.join(', ') : p.tech)}</p>` : '';
-    const cta = p.link ? `<a class="btn" href="${p.link}" target="_blank" rel="noopener">View project</a>` : '';
+  (projects || []).forEach(p => {
+    const title = `<h3>${escapeHTML(p.title || '')}</h3>`;
+    const summary = `<p class="summary">${escapeHTML(p.summary || '')}</p>`;
+    const tech = p.tech ? `<p class="tech">${Array.isArray(p.tech) ? escapeHTML(p.tech.join(', ')) : escapeHTML(p.tech)}</p>` : '';
+    const cta = p.link ? `<a class="btn" href="${encodeURI(p.link)}" target="_blank" rel="noopener">View project</a>` : '';
     const html = `<div class="card project-card">${title}${summary}${tech}${cta}</div>`;
     const wrapper = document.createElement('div');
     wrapper.innerHTML = html;
@@ -58,28 +70,26 @@ function renderProjects(projects) {
   });
 }
 
-/* Skills renderer — expects an array of strings or objects */
+/* Skills renderer */
 function renderSkills(skills) {
   const root = document.getElementById('skills-list');
   if (!root) return;
   root.innerHTML = '';
-  skills.forEach(s => {
+  (skills || []).forEach(s => {
     const label = typeof s === 'string' ? s : (s.name || JSON.stringify(s));
     const el = document.createElement('div');
     el.className = 'card skill';
-    el.innerHTML = `<strong>${label}</strong>`;
+    el.textContent = label;
     root.appendChild(el);
   });
 }
 
-/* Populate About text (from data/site.json or provided text) */
 function setAbout(text) {
   const el = document.getElementById('about-text');
   if (!el) return;
   el.textContent = text || '';
 }
 
-/* Contact form: posts to /api/contact (keeps existing endpoint behavior) */
 function setupContactForm() {
   const form = document.getElementById('contact-form');
   const status = document.getElementById('contact-status');
@@ -88,58 +98,69 @@ function setupContactForm() {
   form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
     status.textContent = 'Sending…';
-    const data = {
+    const payload = {
       name: form.name?.value || '',
       email: form.email?.value || '',
       message: form.message?.value || ''
     };
-
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
       if (!res.ok) {
-        const txt = await res.text().catch(() => '');
-        throw new Error(`Server ${res.status} ${res.statusText} ${txt}`);
+        const t = await res.text().catch(() => '');
+        throw new Error(`contact failed: ${res.status} ${res.statusText} ${t}`);
       }
       status.textContent = 'Thanks — message sent.';
       form.reset();
     } catch (err) {
-      console.error(err);
-      status.textContent = 'Could not send message. Try again later or email gksrikar... (fallback)';
+      console.error('contact error', err);
+      status.textContent = 'Could not send message. Try again later.';
     }
   });
 }
 
-/* Init: load data and render the page */
+/* Simple HTML escape to avoid injection */
+function escapeHTML(s) {
+  return String(s || '')
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 async function init() {
+  console.info('portfolio init');
   try {
     const site = await loadJSON('data/site.json').catch(() => ({}));
-    const aboutText = site && site.about ? site.about : `I’m a Computer Science and Engineering graduate from VIT Vellore with hands-on experience in data engineering, analytics, and cloud-based workflows. Through internships at MSD Pharma, Olam Agri, and NSIC, I’ve worked on ETL pipelines, data transformation, validation, dashboarding, and reporting using Python, SQL, Snowflake, Power BI, Dataiku, Databricks, and AWS. I’m a Databricks Data Engineer Associate and Oracle Cloud Infrastructure 2025 Foundations Associate, with a strong foundation in building data-driven solutions and automation workflows. Beyond internships, I’ve developed patent-published IoT systems, AI-based accessibility projects, and campus tech solutions like shuttle tracking. My interests lie in data engineering, cloud platforms, and building practical tech that solves real problems. I enjoy learning, experimenting, and contributing to projects that combine engineering with measurable impact.`;
+    const aboutText = site.about || `I’m a Computer Science and Engineering graduate from VIT Vellore with hands-on experience in data engineering, analytics, and cloud-based workflows. Through internships at MSD Pharma, Olam Agri, and NSIC, I’ve worked on ETL pipelines, data transformation, validation, dashboarding, and reporting using Python, SQL, Snowflake, Power BI, Dataiku, Databricks, and AWS. I’m a Databricks Data Engineer Associate and Oracle Cloud Infrastructure 2025 Foundations Associate, with a strong foundation in building data-driven solutions and automation workflows. Beyond internships, I’ve developed patent-published IoT systems, AI-based accessibility projects, and campus tech solutions like shuttle tracking. My interests lie in data engineering, cloud platforms, and building practical tech that solves real problems. I enjoy learning, experimenting, and contributing to projects that combine engineering with measurable impact.`;
     setAbout(aboutText);
   } catch (e) {
-    console.warn('Could not load site.json', e);
+    console.warn('site.json load failed', e);
   }
 
   try {
     const experience = await loadJSON('data/experience.json');
-    if (Array.isArray(experience)) renderExperience(experience);
+    if (!Array.isArray(experience)) throw new Error('experience.json is not an array');
+    renderExperience(experience);
   } catch (e) {
-    console.warn('Experience load failed', e);
+    console.error('Experience load failed', e);
+    showSectionError('experience-list', 'Could not load experience data. Check data/experience.json and console for details.');
   }
 
   try {
     const projects = await loadJSON('data/projects.json');
-    if (Array.isArray(projects)) renderProjects(projects);
+    renderProjects(Array.isArray(projects) ? projects : []);
   } catch (e) {
     console.warn('Projects load failed', e);
   }
 
   try {
     const skills = await loadJSON('data/skills.json');
-    if (Array.isArray(skills)) renderSkills(skills);
+    renderSkills(Array.isArray(skills) ? skills : []);
   } catch (e) {
     console.warn('Skills load failed', e);
   }

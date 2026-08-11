@@ -1,119 +1,100 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Krishna Srikar Gudipati — Portfolio</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Portfolio of Krishna Srikar Gudipati" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Krishna Srikar Gudipati — Data & Cloud Engineer</title>
+  <meta name="description" content="Krishna Srikar Gudipati — Data engineering, analytics, and cloud-based workflows. Projects, skills, experience, and contact." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Krishna Srikar Gudipati — Data & Cloud Engineer" />
+  <meta property="og:description" content="Data engineering, ETL, analytics, and cloud-based workflows. Projects, skills, and contact." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gks9.github.io/my_portfolio/" />
+
+  <link rel="icon" href="assets/images/Srikar_profile.jpg" />
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- JSON-LD Resume (minimal) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Krishna Srikar Gudipati",
+    "jobTitle": "Data / Cloud Engineer",
+    "url": "https://gks9.github.io/my_portfolio/",
+    "sameAs": [
+      "https://www.linkedin.com/in/krishna-srikar-gudipati-0b271b26b/",
+      "https://github.com/gks9"
+    ],
+    "description": "Computer Science graduate with hands-on experience in data engineering, analytics, and cloud-based workflows. Skilled in Python, SQL, Snowflake, Power BI, Databricks, and AWS."
+  }
+  </script>
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <div class="brand">
+      <img class="avatar" alt="Krishna Srikar Gudipati — profile photo" loading="lazy" src="assets/images/Srikar_profile.jpg" width="160" height="160">
+      <div class="hero-text">
         <h1 id="site-name">Krishna Srikar Gudipati</h1>
-        <p id="site-tagline" class="muted">Software Developer</p>
+        <p class="lead" id="hero-sub">Data Engineer — Cloud & Analytics · ETL • Pipelines • Reporting</p>
+        <p class="about-brief">I build data-driven solutions and cloud workflows that turn data into measurable impact.</p>
+        <p class="ctas">
+          <a class="btn primary" href="#experience">Experience</a>
+          <a class="btn" href="#projects">Projects</a>
+          <a class="btn" href="resume.pdf" target="_blank" rel="noopener">Download resume</a>
+        </p>
       </div>
-      <nav class="actions">
-        <a id="linkedin-link" class="btn" target="_blank" rel="noopener" aria-label="LinkedIn">
-          <span class="icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zM8 19H5V9h3v10zM6.5 7.732A1.75 1.75 0 1 1 6.5 4.218a1.75 1.75 0 0 1 0 3.514zM20 19h-3v-5.604c0-1.337-.027-3.058-1.862-3.058-1.864 0-2.15 1.455-2.15 2.959V19h-3V9h2.879v1.367h.041c.401-.76 1.379-1.563 2.839-1.563 3.037 0 3.6 2.001 3.6 4.602V19z"/></svg>
-          </span>
-          <span class="label">LinkedIn</span>
-        </a>
-        <a id="github-link" class="btn" target="_blank" rel="noopener" aria-label="GitHub">
-          <span class="icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5A12 12 0 0 0 8.21 23.9c.6.11.82-.26.82-.58l-.01-2.02c-3.34.73-4.04-1.61-4.04-1.61-.55-1.4-1.35-1.77-1.35-1.77-1.1-.75.08-.73.08-.73 1.22.09 1.86 1.26 1.86 1.26 1.08 1.85 2.83 1.32 3.52 1.01.11-.79.42-1.32.76-1.62-2.67-.31-5.48-1.34-5.48-5.95 0-1.31.47-2.38 1.25-3.22-.13-.31-.54-1.57.12-3.28 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.71.25 2.97.12 3.28.78.84 1.25 1.91 1.25 3.22 0 4.62-2.82 5.63-5.5 5.94.43.37.81 1.1.81 2.22l-.01 3.29c0 .32.22.69.83.57A12 12 0 0 0 12 .5z"/></svg>
-          </span>
-          <span class="label">GitHub</span>
-        </a>
-        <a id="email-link" class="btn" aria-label="Email">
-          <span class="icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 13.5 0 4.5h24l-12 9zM0 6v14h24V6l-12 9L0 6z"/></svg>
-          </span>
-          <span class="label">Email</span>
-        </a>
-        <a id="resume-link" class="btn" target="_blank" rel="noopener" aria-label="Resume">
-          <span class="icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16c0 1.103.897 2 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>
-          </span>
-          <span class="label">Resume</span>
-        </a>
-      </nav>
     </div>
   </header>
 
-  <section class="hero">
-    <div class="container hero-inner">
-      <img id="profile-photo" class="avatar" alt="Photo of Krishna Srikar Gudipati" />
-      <div class="intro">
-        <h2>About</h2>
-        <p id="about-text">Passionate about building scalable web applications and clean user experiences.</p>
-        <p id="location-text" class="muted">Hyderabad, India</p>
-      </div>
-    </div>
-  </section>
+  <main id="site-main" class="container">
 
-  <main class="container">
-    <section id="skills-and-certs">
-      <h2>Skills & Certifications</h2>
-      <div class="grid two-col">
-        <div>
-          <h3>Skills</h3>
-          <ul id="skills-list" class="chips"></ul>
-        </div>
-        <div>
-          <h3>Certifications</h3>
-          <ul id="certs-list" class="list"></ul>
-        </div>
+    <section id="experience" aria-labelledby="experience-heading" class="section">
+      <h2 id="experience-heading">Experience</h2>
+      <div id="experience-list" class="stack"></div>
+    </section>
+
+    <section id="projects" aria-labelledby="projects-heading" class="section">
+      <h2 id="projects-heading">Selected projects</h2>
+      <div id="projects-grid" class="grid cards"></div>
+    </section>
+
+    <section id="skills" aria-labelledby="skills-heading" class="section">
+      <h2 id="skills-heading">Skills</h2>
+      <div id="skills-list" class="grid cards small"></div>
+    </section>
+
+    <section id="about" aria-labelledby="about-heading" class="section">
+      <h2 id="about-heading">About</h2>
+      <div class="card">
+        <p id="about-text">Loading…</p>
       </div>
     </section>
 
-    <section id="experience">
-      <h2>Experience</h2>
-      <div id="experience-grid" class="grid"></div>
-    </section>
+    <section id="contact" aria-labelledby="contact-heading" class="section">
+      <h2 id="contact-heading">Contact</h2>
+      <form id="contact-form" class="card form-card" aria-describedby="contact-status">
+        <label for="name">Name</label>
+        <input id="name" name="name" required />
 
-    <section id="education">
-      <h2>Education</h2>
-      <div id="education-grid" class="grid"></div>
-    </section>
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required />
 
-    <section id="leadership">
-      <h2>Leadership & Involvement</h2>
-      <div id="leadership-grid" class="grid"></div>
-    </section>
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
 
-    <section id="projects">
-      <h2>Projects</h2>
-      <div id="projects-grid" class="grid"></div>
-    </section>
-
-    <section id="contact">
-      <h2>Contact</h2>
-      <form id="contact-form" class="card">
-        <div class="field">
-          <label for="name">Name</label>
-          <input id="name" name="name" required />
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Send message</button>
+          <p id="contact-status" role="status" aria-live="polite"></p>
         </div>
-        <div class="field">
-          <label for="email">Email</label>
-          <input id="email" name="email" type="email" required />
-        </div>
-        <div class="field">
-          <label for="message">Message</label>
-          <textarea id="message" name="message" rows="5" required></textarea>
-        </div>
-        <button type="submit" class="btn primary">Send</button>
-        <p id="contact-status" role="status" aria-live="polite" class="muted"></p>
       </form>
     </section>
+
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <small>&copy; <span id="year"></span> <span id="footer-name">Krishna Srikar Gudipati</span></small>
-    </div>
+  <footer class="site-footer container">
+    <p>© Krishna Srikar Gudipati • <a href="https://www.linkedin.com/in/krishna-srikar-gudipati-0b271b26b/" rel="noopener">LinkedIn</a> • <a href="https://github.com/gks9" rel="noopener">GitHub</a></p>
   </footer>
 
   <script src="script.js" defer></script>

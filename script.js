@@ -1,29 +1,27 @@
-// script.js — corrected renderer with debug & graceful errors
+// script.js — final corrected renderer with description fallback and diagnostics
 
 async function loadJSON(path) {
   try {
-    const res = await fetch(path, { cache: "no-cache" });
+    console.info('Loading', path);
+    const res = await fetch(path, { cache: 'no-cache' });
     if (!res.ok) {
-      const t = await res.text().catch(() => "");
+      const t = await res.text().catch(() => '');
       throw new Error(`${path} load failed: ${res.status} ${res.statusText} ${t}`);
     }
     return await res.json();
   } catch (err) {
-    console.error("loadJSON error:", err);
+    console.error('loadJSON error:', err);
     throw err;
   }
 }
 
 function formatDates(start, end) {
-  if (!start && !end) return "";
-  return start && end ? `${start} — ${end}` : start ? `${start} — Present` : end ? `Until ${end}` : "";
+  if (!start && !end) return '';
+  return start && end ? `${start} — ${end}` : start ? `${start} — Present` : end ? `Until ${end}` : '';
 }
 
 function createCardHTML(titleHTML, bodyHTML) {
-  return `<div class="card">
-    ${titleHTML}
-    <div class="meta">${bodyHTML}</div>
-  </div>`;
+  return `<div class="card">\n  ${titleHTML}\n  <div class="meta">${bodyHTML}</div>\n</div>`;
 }
 
 function showSectionError(sectionId, message) {
@@ -32,16 +30,26 @@ function showSectionError(sectionId, message) {
   root.innerHTML = `<div class="card"><strong>Error</strong><p class="muted">${message}</p></div>`;
 }
 
+function escapeHTML(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 /* Experience renderer */
 function renderExperience(exps) {
+  console.info('Rendering experience, count=', (exps || []).length);
   const root = document.getElementById('experience-list') || document.getElementById('experience-grid');
   if (!root) { console.warn('No experience root found'); return; }
   root.innerHTML = '';
 
   (exps || []).forEach(exp => {
-    const title = `<h3 class="role">${escapeHTML(exp.role || '')}</h3>
-      <div class="company">${escapeHTML(exp.company || '')}${exp.location ? ' • ' + escapeHTML(exp.location) : ''}</div>
-      <div class="dates">${escapeHTML(formatDates(exp.start, exp.end))}</div>`;
+    const title = `<h3 class="role">${escapeHTML(exp.role || '')}</h3>` +
+      `<div class="company">${escapeHTML(exp.company || '')}${exp.location ? ' • ' + escapeHTML(exp.location) : ''}</div>` +
+      `<div class="dates">${escapeHTML(formatDates(exp.start, exp.end))}</div>`;
 
     const bullets = (exp.bullets || []).map(b => `<li>${escapeHTML(b)}</li>`).join('');
     const body = `<ul class="bullets">${bullets}</ul>`;
@@ -55,14 +63,17 @@ function renderExperience(exps) {
 
 /* Projects renderer */
 function renderProjects(projects) {
+  console.info('Rendering projects, count=', (projects || []).length);
   const root = document.getElementById('projects-grid');
   if (!root) return;
   root.innerHTML = '';
   (projects || []).forEach(p => {
     const title = `<h3>${escapeHTML(p.title || '')}</h3>`;
-    const summary = `<p class="summary">${escapeHTML(p.summary || '')}</p>`;
+    // support both 'summary' and older 'description' keys
+    const summaryText = p.summary || p.description || '';
+    const summary = `<p class="summary">${escapeHTML(summaryText)}</p>`;
     const tech = p.tech ? `<p class="tech">${Array.isArray(p.tech) ? escapeHTML(p.tech.join(', ')) : escapeHTML(p.tech)}</p>` : '';
-    const cta = p.link ? `<a class="btn" href="${encodeURI(p.link)}" target="_blank" rel="noopener">View project</a>` : '';
+    const cta = p.link ? `<a class="btn" href="${escapeHTML(p.link)}" target="_blank" rel="noopener">View project</a>` : '';
     const html = `<div class="card project-card">${title}${summary}${tech}${cta}</div>`;
     const wrapper = document.createElement('div');
     wrapper.innerHTML = html;
@@ -72,6 +83,7 @@ function renderProjects(projects) {
 
 /* Skills renderer */
 function renderSkills(skills) {
+  console.info('Rendering skills, count=', (skills || []).length);
   const root = document.getElementById('skills-list');
   if (!root) return;
   root.innerHTML = '';
@@ -120,16 +132,6 @@ function setupContactForm() {
       status.textContent = 'Could not send message. Try again later.';
     }
   });
-}
-
-/* Simple HTML escape to avoid injection */
-function escapeHTML(s) {
-  return String(s || '')
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
-    .replace(/'/g, "&#039;");
 }
 
 async function init() {

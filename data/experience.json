@@ -1,5 +1,17 @@
 [
   {
+    "role": "Digital Human Health Intern",
+    "company": "MSD Pharmaceuticals India",
+    "location": "India",
+    "start": "Jan 2026",
+    "end": "June 2026",
+    "bullets": [
+      "Built ETL pipelines and data validation workflows to support digital human health initiatives.",
+      "Implemented data ingestion and transformation using Python and cloud-native services to ensure reliable downstream analytics.",
+      "Collaborated with cross-functional stakeholders to deliver dashboards and automated reporting for clinical & commercial teams."
+    ]
+  },
+  {
     "role": "IT Intern",
     "company": "Olam Agri",
     "location": "",
